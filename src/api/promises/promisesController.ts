@@ -15,8 +15,10 @@ class PromisesController {
 			...req.body,
 			createdBy: userId,
 		};
+		console.log(promiseData, "promiseData");
 
 		const result = await promisesService.createPromise(promiseData);
+
 		httpHandler(res, result);
 	};
 	findByUserId: RequestHandler = async (req: Request, res: Response) => {

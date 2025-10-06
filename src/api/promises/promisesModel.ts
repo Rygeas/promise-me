@@ -87,7 +87,7 @@ const PromiseSchema = new Schema(
 			],
 			default: [],
 		}, // Taraf listesi
-		participants: { type: [ParticipantSchema], validate: (v: IParticipant[]) => v.length >= 1 },
+		participants: { type: [ParticipantSchema] },
 		visibility: { type: String, enum: ["private", "friends", "link"], default: "link" },
 		shareCode: { type: String, index: true, unique: true },
 
@@ -111,11 +111,11 @@ const PromiseSchema = new Schema(
 			enum: ["declaration", "card", "timeline", "receipt", "minimal", "default"],
 			default: "default",
 		},
+		createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
 	},
 	{ timestamps: true },
 );
 
-PromiseSchema.index({ "participants.userId": 1, status: 1, dueAt: 1 });
 export default model("Promise", PromiseSchema);
 
 // Zod validation schemas

@@ -20,9 +20,9 @@ export class PromisesService {
 				return ServiceResponse.failure("Promise title is required", null, StatusCodes.BAD_REQUEST);
 			}
 
-			if (!promiseData.participants || promiseData.participants.length === 0) {
-				return ServiceResponse.failure("At least one participant is required", null, StatusCodes.BAD_REQUEST);
-			}
+			// if (!promiseData.participants || promiseData.participants.length === 0) {
+			// 	return ServiceResponse.failure("At least one participant is required", null, StatusCodes.BAD_REQUEST);
+			// }
 			const urlShareCode = genShareCode();
 
 			const processedData = {
@@ -34,10 +34,11 @@ export class PromisesService {
 				},
 				shareCode: urlShareCode,
 				conditions: promiseData.conditions || [],
-				participants: promiseData.participants.map((p) => ({
-					...p,
-					userId: new mongoose.Types.ObjectId(p.userId),
-				})),
+				participants:
+					promiseData.participants.map((p) => ({
+						...p,
+						userId: new mongoose.Types.ObjectId(p.userId),
+					})) || [],
 			};
 
 			const createdPromise = await this.promisesRepository.createAsync(processedData);
