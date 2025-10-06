@@ -22,19 +22,8 @@ export interface PromiseData {
 	shareCode?: string;
 	conditions: Array<{
 		_id: string;
-		label: string;
-		type: "time" | "action" | "proof";
-		rule: {
-			deadlineAt?: Date;
-			actionKey?: string;
-			requiresEvidence: boolean;
-		};
-		consequence: {
-			kind: "penalty" | "reward" | "forfeit" | "none";
-			text?: string;
-		};
-		isMet: boolean;
-		metAt?: Date;
+		title: string;
+		description: string;
 		createdAt: Date;
 		updatedAt: Date;
 	}>;
@@ -89,19 +78,8 @@ export interface MongoPromiseData {
 	shareCode?: string;
 	conditions: Array<{
 		_id?: string;
-		label: string;
-		type: "time" | "action" | "proof";
-		rule: {
-			deadlineAt?: Date;
-			actionKey?: string;
-			requiresEvidence: boolean;
-		};
-		consequence: {
-			kind: "penalty" | "reward" | "forfeit" | "none";
-			text?: string;
-		};
-		isMet: boolean;
-		metAt?: Date;
+		title: string;
+		description: string;
 		createdAt?: Date;
 		updatedAt?: Date;
 	}>;
@@ -136,6 +114,8 @@ export class PromisesRepository {
 			const promise = await PromiseModel.findById(id)
 				.where({ deletedAt: { $exists: false } })
 				.populate("participants.userId");
+
+			console.log(promise, id, "______________________________-");
 			return promise ? this.mapToPromise(promise) : null;
 		} catch (error) {
 			throw new Error(`Failed to fetch promise with id ${id}: ${(error as Error).message}`);
@@ -217,7 +197,7 @@ export class PromisesRepository {
 			status: promiseDoc.status,
 			seriousness: promiseDoc.seriousness,
 			participants: promiseDoc.participants.map((p: any) => ({
-				userId: p.userId.toString(),
+				userId: p.userId ? p.userId.toString() : null,
 				role: p.role,
 				acceptedAt: p.acceptedAt,
 				signature: p.signature,
@@ -226,12 +206,8 @@ export class PromisesRepository {
 			shareCode: promiseDoc.shareCode,
 			conditions: promiseDoc.conditions.map((c: any) => ({
 				_id: c._id.toString(),
-				label: c.label,
-				type: c.type,
-				rule: c.rule,
-				consequence: c.consequence,
-				isMet: c.isMet,
-				metAt: c.metAt,
+				title: c.title,
+				description: c.description,
 				createdAt: c.createdAt,
 				updatedAt: c.updatedAt,
 			})),

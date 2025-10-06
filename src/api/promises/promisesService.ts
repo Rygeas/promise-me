@@ -39,7 +39,6 @@ export class PromisesService {
 					userId: new mongoose.Types.ObjectId(p.userId),
 				})),
 			};
-			console.log(processedData);
 
 			const createdPromise = await this.promisesRepository.createAsync(processedData);
 			return ServiceResponse.success<PromiseData>("Promise created successfully", createdPromise);
