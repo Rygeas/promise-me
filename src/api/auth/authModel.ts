@@ -11,6 +11,8 @@ export interface IAuth extends Document {
 	refreshToken?: string;
 	lastLogin?: Date;
 	isActive: boolean;
+	authProvider?: string;
+	providerId?: string;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -27,7 +29,9 @@ const authSchema = new Schema<IAuth>(
 		},
 		password: {
 			type: String,
-			required: [true, "Password is required"],
+			required: function () {
+				return this.authProvider === "local";
+			},
 			minlength: [6, "Password must be at least 6 characters long"],
 		},
 		refreshToken: {
@@ -41,6 +45,15 @@ const authSchema = new Schema<IAuth>(
 		isActive: {
 			type: Boolean,
 			default: true,
+		},
+		authProvider: {
+			type: String,
+			enum: ["local", "google", "apple"],
+			default: "local",
+		},
+		providerId: {
+			type: String,
+			default: null, // Google 'sub' alanı buraya gelecek
 		},
 	},
 	{

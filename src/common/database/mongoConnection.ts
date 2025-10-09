@@ -34,7 +34,7 @@ class MongoConnection {
 			this.isConnected = true;
 			logger.info("MongoDB connected successfully");
 		} catch (error) {
-			logger.error("MongoDB connection error:", error);
+			logger.error("MongoDB connection error:");
 			throw error;
 		}
 	}
@@ -50,7 +50,7 @@ class MongoConnection {
 			this.isConnected = false;
 			logger.info("MongoDB disconnected successfully");
 		} catch (error) {
-			logger.error("MongoDB disconnection error:", error);
+			logger.error("MongoDB disconnection error:");
 			throw error;
 		}
 	}
@@ -64,4 +64,4 @@ class MongoConnection {
 	}
 }
 
-export const mongoConnection = MongoConnection.getInstance(); 
+export const mongoConnection = MongoConnection.getInstance();

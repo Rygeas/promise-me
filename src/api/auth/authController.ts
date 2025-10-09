@@ -1,10 +1,13 @@
 import type { Request, RequestHandler, Response } from "express";
+import { OAuth2Client } from "google-auth-library";
 import { StatusCodes } from "http-status-codes";
 import { generateRandomName } from "@/common/utils/displayName";
 import { generateUniqueFriendCode } from "@/common/utils/friendCode";
 import { userService } from "../user/userService";
-import { LoginSchema, LogoutSchema, RefreshTokenSchema, RegisterSchema } from "./authModel";
+import { IAuth, LoginSchema, LogoutSchema, RefreshTokenSchema, RegisterSchema } from "./authModel";
 import { authService } from "./authService";
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 class AuthController {
 	public register: RequestHandler = async (req: Request, res: Response) => {
@@ -37,6 +40,85 @@ class AuthController {
 				message: "Invalid input data",
 				responseObject: null,
 				statusCode: StatusCodes.BAD_REQUEST,
+			});
+		}
+	};
+	public googleRegister: RequestHandler = async (req: Request, res: Response) => {
+		try {
+			const { token } = req.body;
+
+			if (!token) {
+				return res.status(StatusCodes.BAD_REQUEST).send({
+					success: false,
+					message: "Missing Google token",
+					responseObject: null,
+					statusCode: StatusCodes.BAD_REQUEST,
+				});
+			}
+
+			// ✅ Token doğrulama
+			const ticket = await googleClient.verifyIdToken({
+				idToken: token,
+				audience: process.env.GOOGLE_CLIENT_ID,
+			});
+			const payload = ticket.getPayload();
+
+			if (!payload) {
+				return res.status(StatusCodes.UNAUTHORIZED).send({
+					success: false,
+					message: "Invalid Google token",
+					responseObject: null,
+					statusCode: StatusCodes.UNAUTHORIZED,
+				});
+			}
+
+			const { email, name, picture, sub } = payload;
+
+			if (!email) {
+				return res.status(StatusCodes.BAD_REQUEST).send({
+					success: false,
+					message: "Google account has no verified email",
+					responseObject: null,
+					statusCode: StatusCodes.BAD_REQUEST,
+				});
+			}
+
+			// ✅ Kullanıcı zaten varsa -> login
+			let existingUser = await authService.findByEmail(email);
+
+			if (!existingUser.success) {
+				// 🔹 Kullanıcı yoksa register et
+				const registerResult = await authService.registerOAuth(email, "google", sub);
+
+				if (!registerResult.success) {
+					return res.status(registerResult.statusCode).send(registerResult);
+				}
+
+				// 🔹 User profile oluştur
+				await userService.createUser({
+					authId: String(registerResult.responseObject._id),
+					friendCode: await generateUniqueFriendCode(),
+					friendCodeEnabled: true,
+					friendAutoAccept: false,
+					displayName: name || generateRandomName(),
+					avatarUrl: picture || undefined,
+				});
+
+				existingUser = registerResult;
+			}
+
+			// ✅ JWT oluştur ve dön
+			const loginResult = await authService.loginOAuth(existingUser.responseObject);
+
+			return res.status(loginResult.statusCode).send(loginResult);
+		} catch (error) {
+			console.error("❌ Google verification error:", error);
+
+			return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+				success: false,
+				message: "Failed to verify Google token",
+				responseObject: null,
+				statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
 			});
 		}
 	};

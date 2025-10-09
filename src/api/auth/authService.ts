@@ -159,6 +159,52 @@ export class AuthService {
 			return ServiceResponse.failure("Failed to logout", null, 500);
 		}
 	}
+	async registerOAuth(email: string, provider: string, providerId: string): Promise<ServiceResponse<IAuth>> {
+		const existing = await AuthModel.findOne({ email });
+		if (existing) {
+			return ServiceResponse.failure("User already exists", null as any, 409);
+		}
+		const user = await AuthModel.create({
+			email,
+			authProvider: provider,
+			providerId,
+		});
+		return ServiceResponse.success("OAuth registration successful", user, 201);
+	}
+	async loginOAuth(user: IAuth): Promise<ServiceResponse<LoginResult>> {
+		try {
+			// Tokenlar üret
+			const tokens = this.generateTokens(user.id);
+
+			// Refresh token & son giriş tarihi kaydet
+			await AuthModel.findByIdAndUpdate(user.id, {
+				refreshToken: tokens.refreshToken,
+				lastLogin: new Date(),
+			});
+
+			// Hassas verileri çıkar
+			const { password, refreshToken, ...userSafe } = user.toObject();
+
+			return ServiceResponse.success(
+				"OAuth login successful",
+				{
+					user: userSafe,
+					tokens,
+				},
+				200,
+			);
+		} catch (error) {
+			console.error("❌ OAuth login error:", error);
+			return ServiceResponse.failure("Failed to complete OAuth login", null as any, 500);
+		}
+	}
+	async findByEmail(email: string): Promise<ServiceResponse<IAuth>> {
+		const user = await AuthModel.findOne({ email });
+		if (!user) {
+			return ServiceResponse.failure("User not found", null as any, 404);
+		}
+		return ServiceResponse.success("User found", user as IAuth, 200);
+	}
 
 	async verifyToken(token: string): Promise<ServiceResponse<{ authId: string; userId: string }>> {
 		try {

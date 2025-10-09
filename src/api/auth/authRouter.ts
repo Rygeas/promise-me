@@ -31,6 +31,8 @@ authRegistry.registerPath({
 
 authRouter.post("/register", authController.register);
 
+authRouter.post("/google", authController.googleRegister);
+
 // POST /auth/login - User login
 authRegistry.registerPath({
 	method: "post",
