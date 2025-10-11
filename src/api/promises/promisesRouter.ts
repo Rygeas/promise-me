@@ -8,4 +8,5 @@ export const promisesRouter: Router = express.Router();
 
 promisesRouter.post("/", authenticateToken, promisesController.create);
 promisesRouter.get("/", authenticateToken, promisesController.findByUserId);
+promisesRouter.get("/invited", authenticateToken, promisesController.findInvitedToUser);
 promisesRouter.get("/:id", authenticateToken, promisesController.findById);

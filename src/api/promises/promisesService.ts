@@ -64,6 +64,15 @@ export class PromisesService {
 			return ServiceResponse.failure("Failed to find promise", null, StatusCodes.INTERNAL_SERVER_ERROR);
 		}
 	}
+	async findInvitedToUser(userId: string): Promise<ServiceResponse<PromiseData[] | null>> {
+		try {
+			const promises = await this.promisesRepository.findInvitedToUserAsync(userId);
+			return ServiceResponse.success("Invited promises found successfully", promises);
+		} catch (error) {
+			console.error("Error finding invited promises:", error);
+			return ServiceResponse.failure("Failed to find invited promises", null, StatusCodes.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
 
 export const promisesService = new PromisesService();

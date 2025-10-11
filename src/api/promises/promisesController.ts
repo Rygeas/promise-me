@@ -33,6 +33,14 @@ class PromisesController {
 		const result = await promisesService.findById(id);
 		httpHandler(res, result);
 	};
+	findInvitedToUser: RequestHandler = async (req: Request, res: Response) => {
+		const userId = req.user?.userId;
+		if (!userId) {
+			return httpHandler(res, ServiceResponse.failure("User not authenticated", null, StatusCodes.UNAUTHORIZED));
+		}
+		const result = await promisesService.findInvitedToUser(userId);
+		httpHandler(res, result);
+	};
 }
 
 export const promisesController = new PromisesController();

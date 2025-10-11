@@ -125,14 +125,23 @@ export class PromisesRepository {
 
 	async findByUserIdAsync(userId: string): Promise<PromiseData[]> {
 		try {
-			const query: Record<string, unknown> = {
-				"participants.userId": new mongoose.Types.ObjectId(userId),
-				deletedAt: { $exists: false },
-			};
-			const promises = await PromiseModel.find(query).sort({ updatedAt: -1 });
+			const promises = await PromiseModel.find({ createdBy: userId }).sort({ updatedAt: -1 });
 			return promises.map((promise) => this.mapToPromise(promise));
 		} catch (error) {
 			throw new Error(`Failed to fetch promises for user ${userId}: ${(error as Error).message}`);
+		}
+	}
+	async findInvitedToUserAsync(userId: string): Promise<PromiseData[]> {
+		try {
+			const promises = await PromiseModel.find({
+				"participants.userId": new mongoose.Types.ObjectId(userId),
+				createdBy: { $ne: new mongoose.Types.ObjectId(userId) },
+				deletedAt: { $exists: false },
+			}).sort({ updatedAt: -1 });
+
+			return promises.map((promise) => this.mapToPromise(promise));
+		} catch (error) {
+			throw new Error(`Failed to fetch invited promises for user ${userId}: ${(error as Error).message}`);
 		}
 	}
 
@@ -200,6 +209,7 @@ export class PromisesRepository {
 			participants: promiseDoc.participants.map((p: any) => ({
 				userId: p.userId ? p.userId.toString() : null,
 				role: p.role,
+				status: p.status,
 				acceptedAt: p.acceptedAt,
 				signature: p.signature,
 			})),
