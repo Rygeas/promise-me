@@ -12,6 +12,7 @@ export interface PromiseData {
 	participants: Array<{
 		userId: string;
 		role: "creator" | "counterparty" | "member";
+		status: "pending" | "accepted" | "rejected";
 		acceptedAt?: Date;
 		signature?: {
 			method: "tap-accept" | "drawn" | "typed" | "pin";

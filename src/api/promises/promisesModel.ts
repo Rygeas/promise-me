@@ -132,6 +132,7 @@ export const createPromiseSchema = z.object({
 					z.object({
 						userId: z.string().min(1, "User ID is required"),
 						acceptedAt: z.string().datetime().optional(),
+						status: z.enum(["pending", "accepted", "rejected"]).default("pending"),
 						signature: z
 							.object({
 								method: z.enum(["tap-accept", "drawn", "typed", "pin"]).default("tap-accept"),

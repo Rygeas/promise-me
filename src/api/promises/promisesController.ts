@@ -15,7 +15,6 @@ class PromisesController {
 			...req.body,
 			createdBy: userId,
 		};
-		console.log(promiseData, "promiseData");
 
 		const result = await promisesService.createPromise(promiseData);
 
