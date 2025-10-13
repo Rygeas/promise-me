@@ -41,6 +41,28 @@ class PromisesController {
 		const result = await promisesService.findInvitedToUser(userId);
 		httpHandler(res, result);
 	};
+
+	acceptPromise: RequestHandler = async (req: Request, res: Response) => {
+		const userId = req.user?.userId;
+		if (!userId) {
+			return httpHandler(res, ServiceResponse.failure("User not authenticated", null, StatusCodes.UNAUTHORIZED));
+		}
+
+		const { id } = req.params;
+		const result = await promisesService.acceptPromise(id, userId);
+		httpHandler(res, result);
+	};
+
+	rejectPromise: RequestHandler = async (req: Request, res: Response) => {
+		const userId = req.user?.userId;
+		if (!userId) {
+			return httpHandler(res, ServiceResponse.failure("User not authenticated", null, StatusCodes.UNAUTHORIZED));
+		}
+
+		const { id } = req.params;
+		const result = await promisesService.rejectPromise(id, userId);
+		httpHandler(res, result);
+	};
 }
 
 export const promisesController = new PromisesController();

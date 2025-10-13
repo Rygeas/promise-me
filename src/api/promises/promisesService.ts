@@ -73,6 +73,48 @@ export class PromisesService {
 			return ServiceResponse.failure("Failed to find invited promises", null, StatusCodes.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	async acceptPromise(promiseId: string, userId: string): Promise<ServiceResponse<PromiseData | null>> {
+		try {
+			const updatedPromise = await this.promisesRepository.acceptPromiseAsync(promiseId, userId);
+			await this.promisesRepository.updatePromiseStatusAsync(promiseId, "active");
+			if (!updatedPromise) {
+				return ServiceResponse.failure("Promise not found", null, StatusCodes.NOT_FOUND);
+			}
+
+			return ServiceResponse.success("Promise accepted successfully", updatedPromise);
+		} catch (error) {
+			console.error("Error accepting promise:", error);
+			const errorMessage = (error as Error).message;
+
+			if (errorMessage.includes("not a participant")) {
+				return ServiceResponse.failure(errorMessage, null, StatusCodes.FORBIDDEN);
+			}
+
+			return ServiceResponse.failure("Failed to accept promise", null, StatusCodes.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	async rejectPromise(promiseId: string, userId: string): Promise<ServiceResponse<PromiseData | null>> {
+		try {
+			const updatedPromise = await this.promisesRepository.rejectPromiseAsync(promiseId, userId);
+
+			if (!updatedPromise) {
+				return ServiceResponse.failure("Promise not found", null, StatusCodes.NOT_FOUND);
+			}
+
+			return ServiceResponse.success("Promise rejected successfully", updatedPromise);
+		} catch (error) {
+			console.error("Error rejecting promise:", error);
+			const errorMessage = (error as Error).message;
+
+			if (errorMessage.includes("not a participant")) {
+				return ServiceResponse.failure(errorMessage, null, StatusCodes.FORBIDDEN);
+			}
+
+			return ServiceResponse.failure("Failed to reject promise", null, StatusCodes.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
 
 export const promisesService = new PromisesService();

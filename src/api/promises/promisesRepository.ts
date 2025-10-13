@@ -116,7 +116,6 @@ export class PromisesRepository {
 				.where({ deletedAt: { $exists: false } })
 				.populate("participants.userId");
 
-			console.log(promise, id, "______________________________-");
 			return promise ? this.mapToPromise(promise) : null;
 		} catch (error) {
 			throw new Error(`Failed to fetch promise with id ${id}: ${(error as Error).message}`);
@@ -185,6 +184,85 @@ export class PromisesRepository {
 		}
 	}
 
+	async acceptPromiseAsync(promiseId: string, userId: string): Promise<PromiseData | null> {
+		try {
+			const userObjectId = new mongoose.Types.ObjectId(userId);
+
+			const promise = await PromiseModel.findById(promiseId).where({ deletedAt: { $exists: false } });
+
+			if (!promise) {
+				throw new Error("Promise not found");
+			}
+
+			const participantIndex = promise.participants.findIndex((p: any) => p.userId.toString() === userId);
+
+			if (participantIndex === -1) {
+				throw new Error("User is not a participant in this promise");
+			}
+
+			promise.participants[participantIndex].status = "accepted";
+			promise.participants[participantIndex].acceptedAt = new Date();
+
+			const allAccepted = promise.participants.every((p: any) => p.status === "accepted");
+			if (allAccepted) {
+				promise.status = "active";
+			}
+
+			promise.receipts.push({
+				at: new Date(),
+				actorId: userObjectId,
+				action: "participant_accepted",
+			});
+
+			const updatedPromise = await promise.save();
+			console.log(updatedPromise, "______________________________-");
+			return this.mapToPromise(updatedPromise);
+		} catch (error) {
+			throw new Error(`Failed to accept promise: ${(error as Error).message}`);
+		}
+	}
+
+	async rejectPromiseAsync(promiseId: string, userId: string): Promise<PromiseData | null> {
+		try {
+			const userObjectId = new mongoose.Types.ObjectId(userId);
+
+			const promise = await PromiseModel.findById(promiseId).where({ deletedAt: { $exists: false } });
+
+			if (!promise) {
+				throw new Error("Promise not found");
+			}
+
+			const participantIndex = promise.participants.findIndex((p: any) => p.userId.toString() === userId);
+
+			if (participantIndex === -1) {
+				throw new Error("User is not a participant in this promise");
+			}
+
+			promise.participants[participantIndex].status = "rejected";
+			promise.participants[participantIndex].acceptedAt = new Date();
+
+			promise.receipts.push({
+				at: new Date(),
+				actorId: userObjectId,
+				action: "participant_rejected",
+			});
+
+			const updatedPromise = await promise.save();
+			return this.mapToPromise(updatedPromise);
+		} catch (error) {
+			throw new Error(`Failed to reject promise: ${(error as Error).message}`);
+		}
+	}
+	async updatePromiseStatusAsync(id: string, status: PromiseStatus): Promise<PromiseData | null> {
+		try {
+			const updatedPromise = await PromiseModel.findByIdAndUpdate(id, { status }, { new: true }).where({
+				deletedAt: { $exists: false },
+			});
+			return updatedPromise ? this.mapToPromise(updatedPromise) : null;
+		} catch (error) {
+			throw new Error(`Failed to update promise status with id ${id}: ${(error as Error).message}`);
+		}
+	}
 	async softDeleteAsync(id: string): Promise<boolean> {
 		try {
 			const result = await PromiseModel.findByIdAndUpdate(id, { deletedAt: new Date() }, { new: true }).where({

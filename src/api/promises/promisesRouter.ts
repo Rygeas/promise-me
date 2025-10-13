@@ -11,3 +11,6 @@ promisesRouter.get("/", authenticateToken, promisesController.findByUserId);
 promisesRouter.get("/invited", authenticateToken, promisesController.findInvitedToUser);
 
 promisesRouter.get("/:id", authenticateToken, promisesController.findById);
+
+promisesRouter.patch("/:id/accept", authenticateToken, promisesController.acceptPromise);
+promisesRouter.patch("/:id/reject", authenticateToken, promisesController.rejectPromise);
