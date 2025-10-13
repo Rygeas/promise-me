@@ -207,7 +207,7 @@ export class PromisesRepository {
 			status: promiseDoc.status,
 			seriousness: promiseDoc.seriousness,
 			participants: promiseDoc.participants.map((p: any) => ({
-				userId: p.userId ? p.userId.toString() : null,
+				userId: p.userId ? p.userId : null,
 				role: p.role,
 				status: p.status,
 				acceptedAt: p.acceptedAt,
