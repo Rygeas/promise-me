@@ -53,6 +53,7 @@ export interface PromiseData {
 		meta?: Record<string, unknown>;
 	}>;
 	preferredView: "declaration" | "card" | "timeline" | "receipt" | "minimal";
+	createdBy: mongoose.Types.ObjectId;
 	createdAt: Date;
 	updatedAt: Date;
 	deletedAt?: Date;
@@ -321,6 +322,7 @@ export class PromisesRepository {
 				action: r.action,
 				meta: r.meta,
 			})),
+			createdBy: promiseDoc.createdBy,
 			preferredView: promiseDoc.preferredView,
 			createdAt: promiseDoc.createdAt,
 			updatedAt: promiseDoc.updatedAt,
