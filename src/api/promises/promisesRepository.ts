@@ -9,10 +9,18 @@ export interface PromiseData {
 	description?: string;
 	status: PromiseStatus;
 	seriousness: "playful" | "normal" | "serious";
+	sides: Array<{
+		title: string;
+		index: number;
+	}>;
 	participants: Array<{
 		userId: string;
 		role: "creator" | "counterparty" | "member";
 		status: "pending" | "accepted" | "rejected";
+		side: {
+			index: number;
+			title: string;
+		};
 		acceptedAt?: Date;
 		signature?: {
 			method: "tap-accept" | "drawn" | "typed" | "pin";
@@ -150,29 +158,7 @@ export class PromisesRepository {
 		promiseData: Partial<Omit<PromiseData, "_id" | "createdAt" | "updatedAt" | "deletedAt">>,
 	): Promise<PromiseData | null> {
 		try {
-			// Convert string userIds to ObjectIds if they exist in the update data
 			const updateData: Record<string, unknown> = { ...promiseData, updatedAt: new Date() };
-
-			if (updateData.participants) {
-				updateData.participants = (updateData.participants as Array<unknown>).map((p: any) => ({
-					...p,
-					userId: new mongoose.Types.ObjectId(p.userId),
-				}));
-			}
-
-			if (updateData.evidences) {
-				updateData.evidences = (updateData.evidences as Array<unknown>).map((e: any) => ({
-					...e,
-					byUserId: new mongoose.Types.ObjectId(e.byUserId),
-				}));
-			}
-
-			if (updateData.receipts) {
-				updateData.receipts = (updateData.receipts as Array<unknown>).map((r: any) => ({
-					...r,
-					actorId: r.actorId ? new mongoose.Types.ObjectId(r.actorId) : undefined,
-				}));
-			}
 
 			const updatedPromise = await PromiseModel.findByIdAndUpdate(id, updateData, {
 				new: true,
@@ -216,7 +202,6 @@ export class PromisesRepository {
 			});
 
 			const updatedPromise = await promise.save();
-			console.log(updatedPromise, "______________________________-");
 			return this.mapToPromise(updatedPromise);
 		} catch (error) {
 			throw new Error(`Failed to accept promise: ${(error as Error).message}`);
@@ -285,10 +270,12 @@ export class PromisesRepository {
 			description: promiseDoc.description,
 			status: promiseDoc.status,
 			seriousness: promiseDoc.seriousness,
+			sides: promiseDoc.sides,
 			participants: promiseDoc.participants.map((p: any) => ({
 				userId: p.userId ? p.userId : null,
 				role: p.role,
 				status: p.status,
+				side: p.side,
 				acceptedAt: p.acceptedAt,
 				signature: p.signature,
 			})),

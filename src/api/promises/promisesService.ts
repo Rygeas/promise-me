@@ -115,6 +115,65 @@ export class PromisesService {
 			return ServiceResponse.failure("Failed to reject promise", null, StatusCodes.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	async updatePromise(
+		promiseId: string,
+		userId: string,
+		updateData: Partial<Omit<PromiseData, "_id" | "createdAt" | "updatedAt" | "deletedAt">>,
+	): Promise<ServiceResponse<PromiseData | null>> {
+		try {
+			const existingPromise = await this.promisesRepository.findByIdAsync(promiseId);
+
+			if (!existingPromise) {
+				return ServiceResponse.failure("Promise not found", null, StatusCodes.NOT_FOUND);
+			}
+
+			if (existingPromise.createdBy.toString() !== userId) {
+				return ServiceResponse.failure("You are not authorized to update this promise", null, StatusCodes.FORBIDDEN);
+			}
+
+			if (!["draft", "proposed"].includes(existingPromise.status)) {
+				return ServiceResponse.failure("Only draft or proposed promises can be updated", null, StatusCodes.BAD_REQUEST);
+			}
+
+			const updatedPromise = await this.promisesRepository.updateAsync(promiseId, updateData as any);
+
+			if (!updatedPromise) {
+				return ServiceResponse.failure("Failed to update promise", null, StatusCodes.INTERNAL_SERVER_ERROR);
+			}
+
+			return ServiceResponse.success("Promise updated successfully", updatedPromise);
+		} catch (error) {
+			console.error("Error updating promise:", error);
+			return ServiceResponse.failure("Failed to update promise", null, StatusCodes.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	async deletePromise(promiseId: string, userId: string): Promise<ServiceResponse<boolean>> {
+		try {
+			const existingPromise = await this.promisesRepository.findByIdAsync(promiseId);
+
+			if (!existingPromise) {
+				return ServiceResponse.failure("Promise not found", false, StatusCodes.NOT_FOUND);
+			}
+
+			// Sadece creator silebilir
+			if (existingPromise.createdBy.toString() !== userId) {
+				return ServiceResponse.failure("You are not authorized to delete this promise", false, StatusCodes.FORBIDDEN);
+			}
+
+			const deleted = await this.promisesRepository.softDeleteAsync(promiseId);
+
+			if (!deleted) {
+				return ServiceResponse.failure("Failed to delete promise", false, StatusCodes.INTERNAL_SERVER_ERROR);
+			}
+
+			return ServiceResponse.success("Promise deleted successfully", deleted);
+		} catch (error) {
+			console.error("Error deleting promise:", error);
+			return ServiceResponse.failure("Failed to delete promise", false, StatusCodes.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
 
 export const promisesService = new PromisesService();

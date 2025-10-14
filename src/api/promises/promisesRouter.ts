@@ -7,6 +7,7 @@ export const promisesRouter: Router = express.Router();
 //promisesRouter.post("/", authenticateToken, validateRequest(createPromiseSchema), promisesController.create);
 
 promisesRouter.post("/", authenticateToken, promisesController.create);
+
 promisesRouter.get("/", authenticateToken, promisesController.findByUserId);
 promisesRouter.get("/invited", authenticateToken, promisesController.findInvitedToUser);
 
@@ -14,3 +15,6 @@ promisesRouter.get("/:id", authenticateToken, promisesController.findById);
 
 promisesRouter.patch("/:id/accept", authenticateToken, promisesController.acceptPromise);
 promisesRouter.patch("/:id/reject", authenticateToken, promisesController.rejectPromise);
+
+promisesRouter.patch("/:id", authenticateToken, promisesController.update);
+promisesRouter.delete("/:id", authenticateToken, promisesController.delete);

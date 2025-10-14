@@ -63,6 +63,30 @@ class PromisesController {
 		const result = await promisesService.rejectPromise(id, userId);
 		httpHandler(res, result);
 	};
+
+	update: RequestHandler = async (req: Request, res: Response) => {
+		const userId = req.user?.userId;
+		if (!userId) {
+			return httpHandler(res, ServiceResponse.failure("User not authenticated", null, StatusCodes.UNAUTHORIZED));
+		}
+
+		const { id } = req.params;
+		const updateData = req.body;
+
+		const result = await promisesService.updatePromise(id, userId, updateData);
+		httpHandler(res, result);
+	};
+
+	delete: RequestHandler = async (req: Request, res: Response) => {
+		const userId = req.user?.userId;
+		if (!userId) {
+			return httpHandler(res, ServiceResponse.failure("User not authenticated", null, StatusCodes.UNAUTHORIZED));
+		}
+
+		const { id } = req.params;
+		const result = await promisesService.deletePromise(id, userId);
+		httpHandler(res, result);
+	};
 }
 
 export const promisesController = new PromisesController();
