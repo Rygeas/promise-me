@@ -12,7 +12,7 @@ export type PromiseType =
 
 export type PromiseStatus = "draft" | "proposed" | "active" | "fulfilled" | "breached" | "cancelled" | "published"; // bildirge/tek taraflı tipler için
 
-const ConditionSchema = new Schema(
+export const ConditionSchema = new Schema(
 	{
 		title: String,
 		description: String,

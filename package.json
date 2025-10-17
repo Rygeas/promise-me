@@ -17,7 +17,9 @@
 		"db:start": "docker-compose up -d",
 		"db:stop": "docker-compose down",
 		"db:reset": "docker-compose down -v && docker-compose up -d",
-		"dev:full": "npm run db:start && npm run start:dev"
+		"dev:full": "npm run db:start && npm run start:dev",
+		"tailwind:watch": "tailwindcss -i ./src/input.css -o ./public/output.css --watch",
+		"tailwind:build": "tailwindcss -i ./src/input.css -o ./public/output.css --minify"
 	},
 	"dependencies": {
 		"@asteasolutions/zod-to-openapi": "7.3.4",
