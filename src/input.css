@@ -22,33 +22,45 @@
 body {
   margin: 0;
   padding: 0;
-  width: 210mm;
-  height: 297mm;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  background: white;
+  background: #f0f0f0;
 }
 
 .a4-page {
   width: 210mm;
-  height: 297mm;
+  min-height: 297mm;
   padding: 20mm;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  background: white;
+  margin: 10mm 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  break-after: page;
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 16mm 20mm;
+  }
+
   body {
     margin: 0;
-    padding: 0;
+    background: white;
   }
+
   .a4-page {
+    padding: 15mm;
     margin: 0;
     box-shadow: none;
+    break-after: page;
     page-break-after: always;
+    min-height: 297mm;
   }
 }

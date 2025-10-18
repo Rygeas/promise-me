@@ -12,17 +12,19 @@
   </head>
   <body>
     <div class="a4-page bg-[#F6F8FF] blood -z-10 relative">
-      <!-- bg-[url(/public/assets/background/bloodtree.png)] -->
-      <!-- title -->
-      <div class="w-full h-full font-bold">
-        <div>
-          <h1 class="text-6xl font-bold mb-3 text-center">{{title}}</h1>
-          <p class="text-lg font-semibold mb-3 text-center">{{description}}</p>
-        </div>
-        <div class="flex flex-col">
+      <!-- Header Section -->
+      <div class="page-header">
+        <h1 class="text-6xl font-bold mb-3 text-center">{{title}}</h1>
+        <div class="w-full border-t-2 border-black my-4"></div>
+        <p class="text-lg font-semibold text-center">{{description}}</p>
+      </div>
+
+      <!-- Content Section -->
+      <div class="page-content">
+        <div class="flex flex-col h-full justify-between">
           <div class="my-4">
             {{#each conditions}}
-            <p class="text-sm font-semibold mb-2">
+            <p class="text-lg font-semibold mb-2">
               <strong>{{this.title}}:</strong> {{this.description}}
             </p>
             {{/each}}
@@ -34,13 +36,19 @@
               class="blood-image"
             />
           </div>
-          <div class="flex justify-end gap-12 text-sm">
-            {{#each participants}}
-            <p>{{this.name}}</p>
-            {{/each}}
-          </div>
         </div>
       </div>
+
+      <!-- Footer Section -->
+      <div class="page-footer">
+        <div class="flex justify-end gap-12 text-sm">
+          {{#each participants}}
+          <p>{{this.name}}</p>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- Meta Info (Top Right) -->
       <div class="absolute top-6 right-6">
         <div class="flex justify-end gap-4 text-sm">
           <span>Start: {{startAt}}</span>
