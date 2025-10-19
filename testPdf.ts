@@ -72,6 +72,58 @@ const mockData = {
 	dueAt: "3000-12-31",
 };
 
+const beautyMockData = {
+	title: "Promise of Beauty",
+	description:
+		"This solemn agreement binds two souls in a commitment to cherish beauty, grace, and elegance in all endeavors.",
+	participants: [
+		{ name: "Sophia" },
+		{ name: "Aurora" },
+		{ name: "Emma" },
+		{ name: "Lily" },
+		{ name: "Grace" },
+		{ name: "Olivia" },
+		{ name: "Isabella" },
+		{ name: "Charlotte" },
+	],
+	conditions: [
+		{
+			title: "Grace and Elegance",
+			description: "Both parties shall embody grace and elegance in their daily pursuits and interactions.",
+		},
+		{
+			title: "Artistic Harmony",
+			description: "A shared appreciation for art, music, and cultural expression shall define this partnership.",
+		},
+		{
+			title: "Inner Radiance",
+			description: "Both parties commit to cultivating inner radiance and emotional authenticity.",
+		},
+		{
+			title: "Mutual Support",
+			description: "Unwavering support and encouragement shall be provided through all seasons of life.",
+		},
+		{
+			title: "Timeless Bond",
+			description: "This bond transcends time and shall remain eternal and unbreakable.",
+		},
+		{
+			title: "Growth Together",
+			description: "Both parties commit to personal growth and inspiring one another to reach new heights.",
+		},
+		{
+			title: "Celebration of Moments",
+			description: "Every precious moment shared shall be celebrated and treasured forever.",
+		},
+		{
+			title: "Truth and Honesty",
+			description: "All communication shall be rooted in truth, honesty, and compassionate understanding.",
+		},
+	],
+	startAt: "2025-10-18",
+	dueAt: "2099-12-31",
+};
+
 export async function blood() {
 	const pdfPath = await generatePdf(
 		"blood.html", // src/templates/blood.html
@@ -83,4 +135,16 @@ export async function blood() {
 	return pdfPath;
 }
 
+export async function beauty() {
+	const pdfPath = await generatePdf(
+		"beauty.html", // src/templates/beauty.html
+		beautyMockData,
+		"beauty_promise.pdf",
+	);
+
+	console.log("✨ PDF CREATED AT:", pdfPath);
+	return pdfPath;
+}
+
+beauty();
 blood();

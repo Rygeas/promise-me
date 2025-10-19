@@ -4,6 +4,11 @@
   font-family: "Almendra SC", serif;
   line-height: 1.5;
 }
+.beauty {
+  color: #3f2c1e;
+  font-family: "Cormorant Garamond", serif; /* gövde metni */
+  line-height: 1.5;
+}
 
 /* Blood Image - positioned absolutely near conditions */
 .blood-image {
@@ -17,47 +22,36 @@
   object-fit: contain;
   margin: 0;
 }
-
-/* A4 Page Format */
 body {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #f0f0f0;
-}
-
-.a4-page {
   width: 210mm;
   min-height: 297mm;
-  padding: 20mm;
+}
+.a4-page {
+  width: 210mm;
+  height: 297mm;
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
   overflow-wrap: break-word;
   word-wrap: break-word;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background: white;
-  margin: 10mm 0;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   break-after: page;
 }
 
 @media print {
   @page {
     size: A4;
-    margin: 16mm 20mm;
   }
 
   body {
     margin: 0;
-    background: white;
   }
 
   .a4-page {
     padding: 15mm;
-    margin: 0;
+
     box-shadow: none;
     break-after: page;
     page-break-after: always;
