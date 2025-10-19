@@ -16,8 +16,9 @@
       background-size: cover;
       background-position: center;
     "
+    class="-z-20"
   >
-    <div class="a4-page beauty -z-10 relative">
+    <div class="a4-page beauty relative">
       <!-- Header Section -->
       <div class="page-header">
         <h1 class="text-6xl font-bold mb-3 text-center">{{title}}</h1>
@@ -35,6 +36,27 @@
             {{/each}}
           </div>
         </div>
+      </div>
+      <div class="absolute top-12 left-0">
+        <img
+          src="http://localhost:3000/public/assets/background/baykusleft.png"
+          alt="beautyone"
+          class="w-14 h-14"
+        />
+      </div>
+      <div class="absolute top-12 right-0">
+        <img
+          src="http://localhost:3000/public/assets/background/baykusright.png"
+          alt="beautyone"
+          class="w-14 h-14"
+        />
+      </div>
+      <div class="absolute inset-0 flex items-center justify-center -z-10">
+        <img
+          src="http://localhost:3000/public/assets/background/lifetree2.png"
+          alt="lifetree"
+          class="w-full h-auto object-contain opacity-60"
+        />
       </div>
 
       <!-- Footer Section -->
