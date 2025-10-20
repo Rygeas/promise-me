@@ -6,9 +6,7 @@ dotenv.config();
 const envSchema = z.object({
 	NODE_ENV: z.enum(["development", "production", "test"]).default("production"),
 
-	HOST: z.string().min(1).default("localhost"),
-
-	PORT: z.coerce.number().int().positive().default(8080),
+	PORT: z.coerce.number().int().positive().default(8080).optional(),
 
 	CORS_ORIGIN: z.string().url().default("http://localhost:8080"),
 
@@ -18,11 +16,21 @@ const envSchema = z.object({
 
 	// MongoDB Configuration
 	MONGODB_URI: z.string().url().default("mongodb://localhost:27017/express-typescript"),
-	MONGODB_DB_NAME: z.string().min(1).default("express-typescript"),
+	MONGODB_DB_NAME: z.string().min(1).default("promise-me"),
 
 	// JWT Configuration
 	JWT_SECRET: z.string().min(1).default("your-super-secret-jwt-key-change-in-production"),
 	JWT_REFRESH_SECRET: z.string().min(1).default("your-super-secret-refresh-key-change-in-production"),
+
+	// AWS S3 Configuration
+	AWS_REGION: z.string().optional(),
+	AWS_ACCESS_KEY_ID: z.string().optional(),
+	AWS_SECRET_ACCESS_KEY: z.string().optional(),
+	AWS_S3_BUCKET_NAME: z.string().optional(),
+
+	// Google Cloud Configuration
+	GOOGLE_CLIENT_ID: z.string().optional(),
+	GOOGLE_CLIENT_SECRET: z.string().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

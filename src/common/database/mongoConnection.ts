@@ -29,7 +29,6 @@ class MongoConnection {
 				serverSelectionTimeoutMS: 5000,
 				socketTimeoutMS: 45000,
 			};
-
 			await mongoose.connect(env.MONGODB_URI, options);
 			this.isConnected = true;
 			logger.info("MongoDB connected successfully");
