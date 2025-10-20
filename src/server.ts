@@ -13,7 +13,6 @@ import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
 import { env } from "@/common/utils/envConfig";
 import { handlebarsHelpers } from "@/common/utils/handlebarsHelpers";
-import { beautyMockData, medievalMockData, mockData } from "../testPdf";
 import { friendRequestRouter } from "./api/friendRequest/friendRequestRouter";
 import { friendShipRouter } from "./api/friendShip/friendShipRouter";
 import { pairingCodeRouter } from "./api/pairingCode/pairingCodeRouter";
