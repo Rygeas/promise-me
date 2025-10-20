@@ -18,67 +18,77 @@
     "
     class="-z-20"
   >
+    {{#chunk conditions 10}}
     <div class="a4-page beauty relative">
-      <!-- Header Section -->
-      <div class="page-header">
-        <h1 class="text-6xl font-bold mb-3 text-center">{{title}}</h1>
-        <p class="text-lg font-semibold text-center">{{description}}</p>
-      </div>
+      <div class="a4-content">
+        <!-- Header Section - Only on first page -->
+        {{#if isFirst}}
+        <div class="page-header">
+          <h1 class="text-6xl font-bold mb-3 text-center">{{../title}}</h1>
+          <p class="text-lg font-semibold text-center">{{../description}}</p>
+        </div>
+        {{/if}}
 
-      <!-- Content Section -->
-      <div class="page-content">
-        <div class="flex flex-col h-full justify-between">
-          <div class="my-4">
-            {{#each conditions}}
-            <p class="text-lg font-semibold mb-2">
-              <strong>{{this.title}}:</strong> {{this.description}}
-            </p>
+        <!-- Content Section -->
+        <div class="page-content">
+          <div class="flex flex-col h-full justify-between">
+            <div class="my-4">
+              {{#each this.items}}
+              <p class="text-lg font-semibold mb-2">
+                <strong>{{this.title}}:</strong> {{this.description}}
+              </p>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative Images -->
+        <div class="absolute top-12 left-0">
+          <img
+            src="http://localhost:3000/public/assets/background/baykusleft.png"
+            alt="beautyone"
+            class="w-20 h-20"
+          />
+        </div>
+        <div class="absolute top-12 right-0">
+          <img
+            src="http://localhost:3000/public/assets/background/baykusright.png"
+            alt="beautyone"
+            class="w-20 h-20"
+          />
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center -z-10">
+          <img
+            src="http://localhost:3000/public/assets/background/lifetree2.png"
+            alt="lifetree"
+            class="w-full h-auto object-contain opacity-40"
+          />
+        </div>
+
+        <!-- Footer Section - Only on last page -->
+        {{#if isLast}}
+        <div class="page-footer space-y-4">
+          {{#chunk ../participants 5}}
+          <div class="flex justify-end gap-8 text-sm">
+            {{#each this.items}}
+            <div class="flex flex-col items-center">
+              <p class="font-semibold mb-12">{{this.name}}</p>
+            </div>
             {{/each}}
           </div>
+          {{/chunk}}
         </div>
-      </div>
-      <div class="absolute top-12 left-0">
-        <img
-          src="http://localhost:3000/public/assets/background/baykusleft.png"
-          alt="beautyone"
-          class="w-14 h-14"
-        />
-      </div>
-      <div class="absolute top-12 right-0">
-        <img
-          src="http://localhost:3000/public/assets/background/baykusright.png"
-          alt="beautyone"
-          class="w-14 h-14"
-        />
-      </div>
-      <div class="absolute inset-0 flex items-center justify-center -z-10">
-        <img
-          src="http://localhost:3000/public/assets/background/lifetree2.png"
-          alt="lifetree"
-          class="w-full h-auto object-contain opacity-60"
-        />
-      </div>
-
-      <!-- Footer Section -->
-      <div class="page-footer space-y-4">
-        {{#chunk participants 5}}
-        <div class="flex justify-end gap-8 text-sm">
-          {{#each this.items}}
-          <div class="flex flex-col items-center">
-            <p class="font-semibold mb-12">{{this.name}}</p>
-          </div>
-          {{/each}}
-        </div>
-        {{/chunk}}
+        {{/if}}
       </div>
 
       <!-- Meta Info (Top Right) -->
       <div class="absolute top-6 right-6">
         <div class="flex justify-end gap-4 text-sm">
-          <span>Start: {{startAt}}</span>
-          <span>Due: {{dueAt}}</span>
+          <span>Start: {{../startAt}}</span>
+          <span>Due: {{../dueAt}}</span>
         </div>
       </div>
     </div>
+    {{/chunk}}
   </body>
 </html>

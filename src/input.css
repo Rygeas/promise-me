@@ -9,6 +9,15 @@
   font-family: "Cormorant Garamond", serif; /* gövde metni */
   line-height: 1.5;
 }
+.allBorder {
+  font-family: "MedievalSharp", serif;
+  line-height: 1.5;
+}
+.medieval {
+  font-family: "Italianno", cursive;
+  line-height: 1.5;
+  color: #2e1f0f;
+}
 
 /* Blood Image - positioned absolutely near conditions */
 .blood-image {
@@ -22,14 +31,28 @@
   object-fit: contain;
   margin: 0;
 }
+
+/* Drop Cap - First Letter Large (Optional) */
+.drop-cap::first-letter {
+  font-size: 5rem;
+  font-weight: bold;
+  line-height: 1;
+  float: left;
+  padding-right: 0.5rem;
+  margin-top: -0.3rem;
+  display: block;
+}
+
 body {
   width: 210mm;
   min-height: 297mm;
 }
+
+/* ========== A4 PAGE CORE STYLING ========== */
 .a4-page {
   width: 210mm;
   height: 297mm;
-  padding: 0;
+  padding: 15mm;
   margin: 0;
   box-sizing: border-box;
   overflow-wrap: break-word;
@@ -40,21 +63,120 @@ body {
   break-after: page;
 }
 
+.a4-content {
+  /* Garante que o conteúdo não excede a altura disponível */
+  max-height: 267mm; /* 297mm - 15mm (top) - 15mm (bottom) */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  word-break: break-word;
+}
+
+/* ========== TEXT HANDLING FOR DYNAMIC CONTENT ========== */
+.page-header {
+  margin-bottom: 1.5rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.page-header h1 {
+  word-break: break-word;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.page-header p {
+  word-break: break-word;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  text-align: justify;
+}
+
+.page-content {
+  flex: 1;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.page-content p {
+  word-break: break-word;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  text-align: justify;
+  margin-bottom: 0.5rem;
+  /* Evita que um parágrafo seja dividido entre páginas */
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Truncate text if needed */
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========== FOOTER STYLING ========== */
+.page-footer {
+  margin-top: 2rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.page-footer .flex {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ========== PAGINATION AND PRINT ========== */
 @media print {
   @page {
     size: A4;
+    margin: 0;
   }
 
   body {
     margin: 0;
+    padding: 0;
   }
 
   .a4-page {
     padding: 15mm;
-
     box-shadow: none;
     break-after: page;
     page-break-after: always;
     min-height: 297mm;
+    margin: 0;
+  }
+
+  .a4-content {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Prevent orphaned text (última linha de parágrafo em página anterior) */
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Avoid breaking images, headings, etc. across pages */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  img,
+  video,
+  iframe {
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap"
+      rel="stylesheet"
+    />
+    <link href="http://localhost:3000/public/output.css" rel="stylesheet" />
+  </head>
+  <body
+    class="-z-20"
+    style="
+      background-image: url('http://localhost:3000/public/assets/background/allborderback.png');
+      background-size: cover;
+      background-position: center;
+    "
+  >
+    {{#chunk conditions 3}}
+    <div
+      class="a4-page allBorder relative"
+      style="
+        background-image: url('http://localhost:3000/public/assets/background/medival2.png');
+        background-size: cover;
+        background-position: center;
+      "
+    >
+      <div class="a4-content p-40 flex flex-col items-center justify-start">
+        <!-- ========== HEADER (First Page Only) ========== -->
+        {{#if isFirst}}
+        <div class="page-header text-center w-full">
+          <h1
+            class="text-4xl font-bold mb-4"
+            style="word-break: break-word; overflow-wrap: break-word"
+          >
+            {{../title}}
+          </h1>
+          <p
+            class="text-base font-semibold"
+            style="
+              word-break: break-word;
+              overflow-wrap: break-word;
+              line-height: 1.6;
+            "
+          >
+            {{../description}}
+          </p>
+        </div>
+        {{else}}
+        <!-- ========== CONTENT (Other Pages Only) ========== -->
+        <div class="page-content w-full flex-1">
+          <div class="space-y-3">
+            {{#each this.items}}
+            <p
+              class="text-sm font-semibold text-justify leading-relaxed {{#if @first}}drop-cap{{/if}}"
+              style="
+                word-break: break-word;
+                overflow-wrap: break-word;
+                margin: 0.5rem 0;
+              "
+            >
+              <strong style="display: block; margin-bottom: 0.3rem"
+                >{{this.title}}</strong
+              >
+              <span>{{this.description}}</span>
+            </p>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        <!-- ========== FOOTER (Last Page Only) ========== -->
+        {{#if isLast}}
+        <div class="page-footer w-full mt-8 border-t pt-4">
+          {{#chunk ../participants 5}}
+          <div class="flex justify-between gap-4 text-xs mb-4">
+            {{#each this.items}}
+            <div class="flex-1 text-center">
+              <p class="font-semibold" style="word-break: break-word">
+                {{this.name}}
+              </p>
+            </div>
+            {{/each}}
+          </div>
+          {{/chunk}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+    {{/chunk}}
+  </body>
+</html>

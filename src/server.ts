@@ -1,5 +1,6 @@
 import cors from "cors";
 import express, { type Express } from "express";
+import { create as createHandlebars } from "express-handlebars";
 import helmet from "helmet";
 import path from "path";
 import { pino } from "pino";
@@ -11,9 +12,12 @@ import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
 import { env } from "@/common/utils/envConfig";
+import { handlebarsHelpers } from "@/common/utils/handlebarsHelpers";
+import { beautyMockData, medievalMockData, mockData } from "../testPdf";
 import { friendRequestRouter } from "./api/friendRequest/friendRequestRouter";
 import { friendShipRouter } from "./api/friendShip/friendShipRouter";
 import { pairingCodeRouter } from "./api/pairingCode/pairingCodeRouter";
+import { previewRouter } from "./api/preview/previewRouter";
 import { promisesRouter } from "./api/promises/promisesRouter";
 import { fileRouter } from "./api/upload/fileRouter";
 
@@ -23,6 +27,19 @@ const app: Express = express();
 // Set the application to trust the reverse proxy
 app.set("trust proxy", true);
 app.use("/public", express.static(path.join(process.cwd(), "public")));
+
+// Handlebars View Engine Setup
+const hbs = createHandlebars({
+	extname: ".html",
+	layoutsDir: path.join(process.cwd(), "src", "templates"),
+	partialsDir: path.join(process.cwd(), "src", "templates"),
+	defaultLayout: false,
+	helpers: handlebarsHelpers,
+});
+
+app.engine("html", hbs.engine);
+app.set("views", path.join(process.cwd(), "src", "templates"));
+app.set("view engine", "html");
 
 // Middlewares
 app.use(express.json());
@@ -43,6 +60,7 @@ app.use("/promises", promisesRouter);
 app.use("/friendships", friendShipRouter);
 app.use("/friend-requests", friendRequestRouter);
 app.use("/files", fileRouter);
+app.use("/preview", previewRouter);
 
 // Swagger UI
 app.use(openAPIRouter);
