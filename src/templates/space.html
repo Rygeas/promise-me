@@ -8,7 +8,7 @@
       href="https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap"
       rel="stylesheet"
     />
-    <link href="http://localhost:3000/public/output.css" rel="stylesheet" />
+    <link href="{{baseUrl}}/public/output.css" rel="stylesheet" />
   </head>
   <body class="">
     {{#chunk conditions 10}}
@@ -36,7 +36,7 @@
             {{#if isFirst}}
             <div class="flex justify-center relative">
               <img
-                src="http://localhost:3000/public/assets/background/bloodthree.png"
+                src="{{baseUrl}}/public/assets/background/bloodthree.png"
                 alt="bloodtree"
                 class="blood-image"
               />

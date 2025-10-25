@@ -3,8 +3,17 @@ import { beautyMockData, bloodMockData, medievalMockData } from "./mockData";
 
 const previewRouter = Router();
 
+interface TemplateData {
+	title: string;
+	description: string;
+	participants: Array<{ name: string }>;
+	conditions: Array<{ title: string; description: string }>;
+	startAt: string;
+	dueAt: string;
+}
+
 // Mock Data for Templates
-const templatesMockData: Record<string, any> = {
+const templatesMockData: Record<string, TemplateData> = {
 	blood: bloodMockData,
 	beauty: beautyMockData,
 	medieval: medievalMockData,
@@ -23,7 +32,18 @@ previewRouter.get("/:name", (req, res) => {
 		});
 	}
 
-	res.render(name, data);
+	// Build the base URL from the request
+	const protocol = req.protocol || "http";
+	const host = req.get("host") || "localhost:3000";
+	const baseUrl = `${protocol}://${host}`;
+
+	// Add baseUrl directly to template data
+	const templateData = {
+		...data,
+		baseUrl,
+	};
+
+	res.render(name, templateData);
 });
 
 export { previewRouter };
